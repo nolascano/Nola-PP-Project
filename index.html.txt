@@ -3,10 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Quiz Website</title>
+    <title>My Simple Quiz Website</title>
 </head>
 <body>
-    <h1>Welcome to My Quiz Website</h1>
-    <p>This is a simple webpage to start with.</p>
+    <h1 style="color: blue; text-align: center;">Welcome to My Quiz Website</h1>
+    <p style="text-align: center;">This is a simple webpage to start with.</p>
+
+    <!-- Button and Message -->
+    <div style="text-align: center;">
+        <button id="myButton" style="background-color: green; color: white; padding: 10px 20px; font-size: 16px;">Click Me!</button>
+        <p id="message"></p>
+    </div>
+
+    <!-- JavaScript to handle button click -->
+    <script>
+        document.getElementById('myButton').addEventListener('click', function() {
+            document.getElementById('message').textContent = 'Button clicked!';
+        });
+    </script>
 </body>
 </html>
