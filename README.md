@@ -55,99 +55,55 @@
     </style>
 </head>
 <body>
-    <h1>Welcome to My Quiz Website</h1>
-
+    <h1>Welcome to My Memory Psychology Quiz Website</h1>
     <div class="container">
-        <!-- Main category buttons -->
-        <button onclick="showLevels('sensory')">Sensory Memory Quizzes</button>
-        <button onclick="showLevels('working')">Working Memory Quizzes</button>
-        <button onclick="showLevels('longterm')">Long Term Memory Quizzes</button>
-        <button onclick="showLevels('shortterm')">Short Term Memory Quizzes</button>
+        <button onclick="showCategory('short-term-memory')">Short Term Memory Quizzes</button>
+        <button onclick="showCategory('working-memory')">Working Memory Quizzes</button>
+        <button onclick="showCategory('long-term-memory')">Long Term Memory Quizzes</button>
+        <button onclick="showCategory('sensory-memory')">Sensory Memory Quizzes</button>
     </div>
 
-    <!-- Level buttons for each category -->
-    <div id="sensory" class="level-buttons hidden">
-        <h2>Sensory Memory Quizzes</h2>
-        <button onclick="startQuiz('sensory', 1)">Level 1</button>
-        <button onclick="startQuiz('sensory', 2)">Level 2</button>
-        <button onclick="startQuiz('sensory', 3)">Level 3</button>
-    </div>
-    <div id="working" class="level-buttons hidden">
-        <h2>Working Memory Quizzes</h2>
-        <button onclick="startQuiz('working', 1)">Level 1</button>
-        <button onclick="startQuiz('working', 2)">Level 2</button>
-        <button onclick="startQuiz('working', 3)">Level 3</button>
-    </div>
-    <div id="longterm" class="level-buttons hidden">
-        <h2>Long Term Memory Quizzes</h2>
-        <button onclick="startQuiz('longterm', 1)">Level 1</button>
-        <button onclick="startQuiz('longterm', 2)">Level 2</button>
-        <button onclick="startQuiz('longterm', 3)">Level 3</button>
-    </div>
-    <div id="shortterm" class="level-buttons hidden">
+    <div id="short-term-memory" class="hidden">
         <h2>Short Term Memory Quizzes</h2>
-        <button onclick="startQuiz('shortterm', 1)">Level 1</button>
-        <button onclick="startQuiz('shortterm', 2)">Level 2</button>
-        <button onclick="startQuiz('shortterm', 3)">Level 3</button>
-    </div>
-
-    <div id="quiz" class="hidden">
-        <div class="question-container">
-            <div class="timer" id="timer">20</div>
-            <div id="imageContainer"></div>
-            <p id="questionText"></p>
-            <div id="options"></div>
+        <div class="level-buttons">
+            <button onclick="startQuiz()">Level 1</button>
+            <!-- Add Level 2 and Level 3 buttons here if needed -->
         </div>
     </div>
 
-    <p id="message"></p>
+    <div id="question-container" class="hidden">
+        <div id="timer" class="timer">20</div>
+        <div id="imageContainer"></div>
+        <p id="questionText"></p>
+        <div id="options"></div>
+    </div>
 
-    <!-- JavaScript to handle button clicks and quiz functionality -->
     <script>
-        var score = 0;
-        var timerInterval;
-
-        function showLevels(category) {
-            // Hide all level buttons
-            var levels = document.querySelectorAll('.level-buttons');
-            levels.forEach(function(level) {
-                level.classList.add('hidden');
+        function showCategory(category) {
+            document.querySelectorAll('.container > button').forEach(button => {
+                button.classList.toggle('hidden', button.textContent.toLowerCase() !== category.replace('-', ' '));
             });
-
-            // Show the selected category's level buttons
-            document.getElementById(category).classList.remove('hidden');
         }
 
-        function startQuiz(category, level) {
-            // Hide all level buttons
-            var levels = document.querySelectorAll('.level-buttons');
-            levels.forEach(function(level) {
-                level.classList.add('hidden');
-            });
-
-            // Show quiz container
-            document.getElementById('quiz').classList.remove('hidden');
-
-            // Load specific quiz based on category and level
-            if (category === 'shortterm' && level === 1) {
-                loadShortTermMemoryQuiz();
-            }
-        }
-
-        function loadShortTermMemoryQuiz() {
+        function startQuiz() {
             const images = [
-                'cat.jpg', 'dog.jpg', 'pencil.jpg', 'house.jpg', 
-                'rose.jpg', 'bike.jpg', 'basketball.jpg', 'tennis.jpg'
+                'images/dog.jpg',
+                'images/cat.jpg',
+                'images/hat.jpg',
+                'images/house.jpg',
+                'images/tennis_ball.jpg',
+                'images/basketball.jpg',
+                'images/pencil.jpg'
             ];
 
             const imageContainer = document.getElementById('imageContainer');
             imageContainer.innerHTML = ''; // Clear previous images
 
-            images.forEach(image => {
+            images.forEach(src => {
                 const img = document.createElement('img');
-                img.src = 'images/' + image; // Assuming images are in the 'images' folder
+                img.src = src;
                 img.className = 'quiz-image';
-                img.id = image;
+                img.id = src;
                 imageContainer.appendChild(img);
             });
 
@@ -158,19 +114,21 @@
             setTimeout(() => {
                 hideRandomImage(images);
             }, 20000);
+
+            document.getElementById('short-term-memory').classList.add('hidden');
+            document.getElementById('question-container').classList.remove('hidden');
         }
 
         function startTimer() {
-            let time = 20; // Timer duration in seconds
+            let time = 20;
             document.getElementById('timer').textContent = time;
 
-            timerInterval = setInterval(() => {
+            const timerInterval = setInterval(() => {
                 time--;
                 document.getElementById('timer').textContent = time;
                 if (time <= 0) {
                     clearInterval(timerInterval);
-                    document.getElementById('message').textContent = 'Time is up!';
-                    // Handle time up scenario (e.g., reveal the answer)
+                    document.getElementById('questionText').textContent = 'Time is up!';
                 }
             }, 1000);
         }
@@ -178,30 +136,27 @@
         function hideRandomImage(images) {
             const randomIndex = Math.floor(Math.random() * images.length);
             const imageToHide = images[randomIndex];
-            document.getElementById(imageToHide).style.display = 'none';
+            document.querySelector(`#imageContainer img[src="${imageToHide}"]`).style.display = 'none';
 
             // Set the question text
             document.getElementById('questionText').textContent = 'Which image is missing?';
 
             // Create answer options
             let optionsHtml = '';
-            images.forEach(image => {
-                const option = image.replace('.jpg', '').replace(/_/g, ' ');
-                optionsHtml += `<button onclick="checkAnswer('${image}', '${imageToHide}')">${option}</button>`;
+            images.forEach(src => {
+                const option = src.split('/').pop().split('.')[0];
+                optionsHtml += `<button onclick="checkAnswer('${option}', '${imageToHide.split('/').pop().split('.')[0]}')">${option}</button>`;
             });
             document.getElementById('options').innerHTML = optionsHtml;
         }
 
         function checkAnswer(selectedAnswer, missingImage) {
-            clearInterval(timerInterval); // Stop the timer
-            const correctAnswer = missingImage.replace('.jpg', '').replace(/_/g, ' ');
+            const correctAnswer = missingImage;
             if (selectedAnswer === correctAnswer) {
-                score++;
-                document.getElementById('message').textContent = 'Correct answer!';
+                alert('Correct answer!');
             } else {
-                document.getElementById('message').textContent = 'Incorrect answer!';
+                alert('Incorrect answer!');
             }
-            // Load next question or finish quiz
         }
     </script>
 </body>
