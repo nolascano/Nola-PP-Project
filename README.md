@@ -37,6 +37,20 @@
         .level-buttons {
             margin-top: 20px;
         }
+        .question-container {
+            margin: 20px auto;
+            text-align: center;
+        }
+        .timer {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .quiz-image {
+            width: 300px;
+            height: auto;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -53,33 +67,45 @@
     <!-- Level buttons for each category -->
     <div id="sensory" class="level-buttons hidden">
         <h2>Sensory Memory Quizzes</h2>
-        <button onclick="showMessage('sensory', 1)">Level 1</button>
-        <button onclick="showMessage('sensory', 2)">Level 2</button>
-        <button onclick="showMessage('sensory', 3)">Level 3</button>
+        <button onclick="startQuiz('sensory', 1)">Level 1</button>
+        <button onclick="startQuiz('sensory', 2)">Level 2</button>
+        <button onclick="startQuiz('sensory', 3)">Level 3</button>
     </div>
     <div id="working" class="level-buttons hidden">
         <h2>Working Memory Quizzes</h2>
-        <button onclick="showMessage('working', 1)">Level 1</button>
-        <button onclick="showMessage('working', 2)">Level 2</button>
-        <button onclick="showMessage('working', 3)">Level 3</button>
+        <button onclick="startQuiz('working', 1)">Level 1</button>
+        <button onclick="startQuiz('working', 2)">Level 2</button>
+        <button onclick="startQuiz('working', 3)">Level 3</button>
     </div>
     <div id="longterm" class="level-buttons hidden">
         <h2>Long Term Memory Quizzes</h2>
-        <button onclick="showMessage('longterm', 1)">Level 1</button>
-        <button onclick="showMessage('longterm', 2)">Level 2</button>
-        <button onclick="showMessage('longterm', 3)">Level 3</button>
+        <button onclick="startQuiz('longterm', 1)">Level 1</button>
+        <button onclick="startQuiz('longterm', 2)">Level 2</button>
+        <button onclick="startQuiz('longterm', 3)">Level 3</button>
     </div>
     <div id="shortterm" class="level-buttons hidden">
         <h2>Short Term Memory Quizzes</h2>
-        <button onclick="showMessage('shortterm', 1)">Level 1</button>
-        <button onclick="showMessage('shortterm', 2)">Level 2</button>
-        <button onclick="showMessage('shortterm', 3)">Level 3</button>
+        <button onclick="startQuiz('shortterm', 1)">Level 1</button>
+        <button onclick="startQuiz('shortterm', 2)">Level 2</button>
+        <button onclick="startQuiz('shortterm', 3)">Level 3</button>
+    </div>
+
+    <div id="quiz" class="hidden">
+        <div class="question-container">
+            <div class="timer" id="timer">10</div>
+            <img id="quizImage" class="quiz-image" src="" alt="Quiz Image">
+            <p id="questionText"></p>
+            <div id="options"></div>
+        </div>
     </div>
 
     <p id="message"></p>
 
-    <!-- JavaScript to handle button clicks -->
+    <!-- JavaScript to handle button clicks and quiz functionality -->
     <script>
+        var score = 0;
+        var timerInterval;
+
         function showLevels(category) {
             // Hide all level buttons
             var levels = document.querySelectorAll('.level-buttons');
@@ -91,8 +117,68 @@
             document.getElementById(category).classList.remove('hidden');
         }
 
-        function showMessage(category, level) {
-            document.getElementById('message').textContent = 'You selected ' + category + ' Quiz Level ' + level + '!';
+        function startQuiz(category, level) {
+            // Hide all level buttons
+            var levels = document.querySelectorAll('.level-buttons');
+            levels.forEach(function(level) {
+                level.classList.add('hidden');
+            });
+
+            // Show quiz container
+            document.getElementById('quiz').classList.remove('hidden');
+
+            // Load a sample question for demonstration
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            // Sample question data
+            const questionData = {
+                image: 'https://via.placeholder.com/300', // Replace with actual image URL
+                question: 'What is this?',
+                options: ['Option 1', 'Option 2', 'Option 3'],
+                correctAnswer: 'Option 2'
+            };
+
+            // Set image and question
+            document.getElementById('quizImage').src = questionData.image;
+            document.getElementById('questionText').textContent = questionData.question;
+
+            // Create answer options
+            let optionsHtml = '';
+            questionData.options.forEach(option => {
+                optionsHtml += `<button onclick="checkAnswer('${option}', '${questionData.correctAnswer}')">${option}</button>`;
+            });
+            document.getElementById('options').innerHTML = optionsHtml;
+
+            // Start timer
+            startTimer();
+        }
+
+        function startTimer() {
+            let time = 10; // Timer duration in seconds
+            document.getElementById('timer').textContent = time;
+
+            timerInterval = setInterval(() => {
+                time--;
+                document.getElementById('timer').textContent = time;
+                if (time <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('message').textContent = 'Time is up!';
+                    // Handle time up scenario
+                }
+            }, 1000);
+        }
+
+        function checkAnswer(selectedAnswer, correctAnswer) {
+            clearInterval(timerInterval); // Stop the timer
+            if (selectedAnswer === correctAnswer) {
+                score++;
+                document.getElementById('message').textContent = 'Correct answer!';
+            } else {
+                document.getElementById('message').textContent = 'Incorrect answer!';
+            }
+            // Load next question or finish quiz
         }
     </script>
 </body>
