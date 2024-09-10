@@ -25,11 +25,24 @@
         button:hover {
             background-color: #45a049; /* Darker green on hover */
         }
+        #message {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
     <h1>Welcome to My Quiz Website</h1>
-    <button>Click Me!</button>
+    <button id="myButton">Click Me!</button>
+    <p id="message"></p>
+
+    <!-- JavaScript to handle button click -->
+    <script>
+        document.getElementById('myButton').addEventListener('click', function() {
+            document.getElementById('message').textContent = 'Button clicked!';
+        });
+    </script>
 </body>
 </html>
-
