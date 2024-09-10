@@ -115,6 +115,11 @@
                 hideRandomImage(images);
             }, 20000);
 
+            // Hide other memory quiz options
+            document.querySelectorAll('.container > button').forEach(button => {
+                button.classList.add('hidden');
+            });
+
             document.getElementById('short-term-memory').classList.add('hidden');
             document.getElementById('question-container').classList.remove('hidden');
         }
@@ -157,6 +162,13 @@
             } else {
                 alert('Incorrect answer!');
             }
+
+            // Show the quiz options again
+            document.querySelectorAll('.container > button').forEach(button => {
+                button.classList.remove('hidden');
+            });
+            document.getElementById('short-term-memory').classList.remove('hidden');
+            document.getElementById('question-container').classList.add('hidden');
         }
     </script>
 </body>
