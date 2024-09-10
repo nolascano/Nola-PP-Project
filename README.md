@@ -47,9 +47,10 @@
             margin-bottom: 10px;
         }
         .quiz-image {
-            width: 300px;
+            width: 100px;
             height: auto;
-            margin-bottom: 10px;
+            margin: 10px;
+            display: inline-block;
         }
     </style>
 </head>
@@ -92,8 +93,8 @@
 
     <div id="quiz" class="hidden">
         <div class="question-container">
-            <div class="timer" id="timer">10</div>
-            <img id="quizImage" class="quiz-image" src="" alt="Quiz Image">
+            <div class="timer" id="timer">20</div>
+            <div id="imageContainer"></div>
             <p id="questionText"></p>
             <div id="options"></div>
         </div>
@@ -127,36 +128,40 @@
             // Show quiz container
             document.getElementById('quiz').classList.remove('hidden');
 
-            // Load a sample question for demonstration
-            loadQuestion();
+            // Load specific quiz based on category and level
+            if (category === 'shortterm' && level === 1) {
+                loadShortTermMemoryQuiz();
+            }
         }
 
-        function loadQuestion() {
-            // Sample question data
-            const questionData = {
-                image: 'https://via.placeholder.com/300', // Replace with actual image URL
-                question: 'What is this?',
-                options: ['Option 1', 'Option 2', 'Option 3'],
-                correctAnswer: 'Option 2'
-            };
+        function loadShortTermMemoryQuiz() {
+            const images = [
+                'cat.jpg', 'dog.jpg', 'pencil.jpg', 'house.jpg', 
+                'rose.jpg', 'bike.jpg', 'basketball.jpg', 'tennis.jpg'
+            ];
 
-            // Set image and question
-            document.getElementById('quizImage').src = questionData.image;
-            document.getElementById('questionText').textContent = questionData.question;
+            const imageContainer = document.getElementById('imageContainer');
+            imageContainer.innerHTML = ''; // Clear previous images
 
-            // Create answer options
-            let optionsHtml = '';
-            questionData.options.forEach(option => {
-                optionsHtml += `<button onclick="checkAnswer('${option}', '${questionData.correctAnswer}')">${option}</button>`;
+            images.forEach(image => {
+                const img = document.createElement('img');
+                img.src = 'images/' + image; // Assuming images are in the 'images' folder
+                img.className = 'quiz-image';
+                img.id = image;
+                imageContainer.appendChild(img);
             });
-            document.getElementById('options').innerHTML = optionsHtml;
 
-            // Start timer
+            // Start the timer
             startTimer();
+
+            // Choose a random image to hide after 20 seconds
+            setTimeout(() => {
+                hideRandomImage(images);
+            }, 20000);
         }
 
         function startTimer() {
-            let time = 10; // Timer duration in seconds
+            let time = 20; // Timer duration in seconds
             document.getElementById('timer').textContent = time;
 
             timerInterval = setInterval(() => {
@@ -165,13 +170,31 @@
                 if (time <= 0) {
                     clearInterval(timerInterval);
                     document.getElementById('message').textContent = 'Time is up!';
-                    // Handle time up scenario
+                    // Handle time up scenario (e.g., reveal the answer)
                 }
             }, 1000);
         }
 
-        function checkAnswer(selectedAnswer, correctAnswer) {
+        function hideRandomImage(images) {
+            const randomIndex = Math.floor(Math.random() * images.length);
+            const imageToHide = images[randomIndex];
+            document.getElementById(imageToHide).style.display = 'none';
+
+            // Set the question text
+            document.getElementById('questionText').textContent = 'Which image is missing?';
+
+            // Create answer options
+            let optionsHtml = '';
+            images.forEach(image => {
+                const option = image.replace('.jpg', '').replace(/_/g, ' ');
+                optionsHtml += `<button onclick="checkAnswer('${image}', '${imageToHide}')">${option}</button>`;
+            });
+            document.getElementById('options').innerHTML = optionsHtml;
+        }
+
+        function checkAnswer(selectedAnswer, missingImage) {
             clearInterval(timerInterval); // Stop the timer
+            const correctAnswer = missingImage.replace('.jpg', '').replace(/_/g, ' ');
             if (selectedAnswer === correctAnswer) {
                 score++;
                 document.getElementById('message').textContent = 'Correct answer!';
