@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Memory Psychology Quiz Website</title>
-    <style>
+    <style> 
         body {
             background-color: #f0f8ff; /* Light blue background */
             font-family: Arial, sans-serif; /* Font style */
